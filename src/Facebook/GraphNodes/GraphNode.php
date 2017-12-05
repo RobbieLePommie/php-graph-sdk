@@ -34,14 +34,14 @@ class GraphNode implements \ArrayAccess, \IteratorAggregate
     /**
      * @var array Maps object key names to Graph object types.
      */
-    protected static $graphObjectMap = [];
+    protected static array $graphObjectMap = [];
 
     /**
      * The fields contained in the node.
      *
      * @var array
      */
-    protected $fields = [];
+    protected array $fields = [];
 
     /**
      * Init this Graph object.
@@ -61,7 +61,7 @@ class GraphNode implements \ArrayAccess, \IteratorAggregate
      *
      * @return mixed
      */
-    public function getField($name, $default = null)
+    public function getField(string $name, $default = null)
     {
         if (isset($this->fields[$name])) {
             return $this->fields[$name];
@@ -75,7 +75,7 @@ class GraphNode implements \ArrayAccess, \IteratorAggregate
      *
      * @return array
      */
-    public function getFieldNames()
+    public function getFieldNames() : array
     {
         return array_keys($this->fields);
     }
@@ -85,7 +85,7 @@ class GraphNode implements \ArrayAccess, \IteratorAggregate
      *
      * @return array
      */
-    public function all()
+    public function all() : array
     {
         return $this->fields;
     }
@@ -95,7 +95,7 @@ class GraphNode implements \ArrayAccess, \IteratorAggregate
      *
      * @return array
      */
-    public function asArray()
+    public function asArray() : array
     {
         return array_map(function ($value) {
             if ($value instanceof GraphNode || $value instanceof GraphEdge) {
@@ -125,7 +125,7 @@ class GraphNode implements \ArrayAccess, \IteratorAggregate
      *
      * @return string
      */
-    public function asJson($options = 0)
+    public function asJson($options = 0) : string
     {
         return json_encode($this->uncastFields(), $options);
     }
@@ -135,7 +135,7 @@ class GraphNode implements \ArrayAccess, \IteratorAggregate
      *
      * @return \ArrayIterator
      */
-    public function getIterator()
+    public function getIterator() : \ArrayIterator
     {
         return new \ArrayIterator($this->fields);
     }
@@ -147,7 +147,7 @@ class GraphNode implements \ArrayAccess, \IteratorAggregate
      *
      * @return bool
      */
-    public function offsetExists($key)
+    public function offsetExists(string $key) : bool
     {
         return array_key_exists($key, $this->fields);
     }
@@ -159,7 +159,7 @@ class GraphNode implements \ArrayAccess, \IteratorAggregate
      *
      * @return mixed
      */
-    public function offsetGet($key)
+    public function offsetGet(string $key)
     {
         return $this->fields[$key];
     }
@@ -172,7 +172,7 @@ class GraphNode implements \ArrayAccess, \IteratorAggregate
      *
      * @return void
      */
-    public function offsetSet($key, $value)
+    public function offsetSet(string $key, $value) : void
     {
         if (is_null($key)) {
             $this->fields[] = $value;
@@ -188,7 +188,7 @@ class GraphNode implements \ArrayAccess, \IteratorAggregate
      *
      * @return void
      */
-    public function offsetUnset($key)
+    public function offsetUnset(string $key) : void
     {
         unset($this->fields[$key]);
     }
@@ -198,7 +198,7 @@ class GraphNode implements \ArrayAccess, \IteratorAggregate
      *
      * @return string
      */
-    public function __toString()
+    public function __toString() : string
     {
         return $this->asJson();
     }
@@ -213,7 +213,7 @@ class GraphNode implements \ArrayAccess, \IteratorAggregate
      *
      * @return array
      */
-    public function castFields(array $data)
+    public function castFields(array $data) : array
     {
         $fields = [];
 
@@ -239,7 +239,7 @@ class GraphNode implements \ArrayAccess, \IteratorAggregate
      *
      * @return array
      */
-    public function uncastFields()
+    public function uncastFields() : array
     {
         $fields = $this->asArray();
 
@@ -263,7 +263,7 @@ class GraphNode implements \ArrayAccess, \IteratorAggregate
      * @see http://www.cl.cam.ac.uk/~mgk25/iso-time.html
      * @see http://en.wikipedia.org/wiki/ISO_8601
      */
-    public function isIso8601DateString($string)
+    public function isIso8601DateString(string $string) : bool
     {
         // This insane regex was yoinked from here:
         // http://www.pelagodesign.com/blog/2009/05/20/iso-8601-date-validation-that-doesnt-suck/
@@ -286,7 +286,7 @@ class GraphNode implements \ArrayAccess, \IteratorAggregate
      *
      * @return boolean
      */
-    public function shouldCastAsDateTime($key)
+    public function shouldCastAsDateTime(string $key) : bool
     {
         return in_array($key, [
             'created_time',
@@ -308,7 +308,7 @@ class GraphNode implements \ArrayAccess, \IteratorAggregate
      *
      * @return \DateTime
      */
-    public function castToDateTime($value)
+    public function castToDateTime($value) : \DateTime
     {
         if (is_int($value)) {
             $dt = new \DateTime();
@@ -327,7 +327,7 @@ class GraphNode implements \ArrayAccess, \IteratorAggregate
      *
      * @return Birthday
      */
-    public function castToBirthday($value)
+    public function castToBirthday(string $value) : Birthday
     {
         return new Birthday($value);
     }
