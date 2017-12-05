@@ -85,7 +85,7 @@ class GraphNode implements \ArrayAccess, \IteratorAggregate
      *
      * @return array
      */
-    public function all() : array
+    public function getFields() : array
     {
         return $this->fields;
     }
