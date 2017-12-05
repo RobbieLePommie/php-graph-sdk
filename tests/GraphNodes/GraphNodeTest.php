@@ -103,7 +103,7 @@ class GraphNodeTest extends \PHPUnit\Framework\TestCase
             'some_collection' => $graphNodeOne,
         ]);
 
-        $uncastArray = $graphNodeTwo->uncastItems();
+        $uncastArray = $graphNodeTwo->uncastFields();
 
         $this->assertEquals([
             'id' => '123',
