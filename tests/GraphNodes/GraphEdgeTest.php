@@ -171,7 +171,8 @@ class GraphEdgeTest extends \PHPUnit\Framework\TestCase
     public function testTheKeysFromTheCollectionCanBeReturned()
     {
         $graphEdge = new GraphEdge(
-            $this->request, [
+            $this->request,
+            [
                 'key1' => 'foo',
                 'key2' => 'bar',
                 'key3' => 'baz',

@@ -32,7 +32,7 @@ class PseudoRandomStringGeneratorTraitTest extends \PHPUnit\Framework\TestCase
      */
     public function testAnInvalidLengthWillThrow()
     {
-        $this->expectException('\InvalidArgumentException');
+        $this->expectException('\TypeError');
 
         $prsg = new MyFooBarPseudoRandomStringGenerator();
         $prsg->validateLength('foo_len');

@@ -96,7 +96,7 @@ class FacebookApp implements \Serializable
      *
      * @param string $serialized
      */
-    public function unserialize(string $serialized) : void
+    public function unserialize($serialized)
     {
         list($id, $secret) = explode('|', $serialized);
 

@@ -64,20 +64,4 @@ class FacebookAppTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('secret', $newApp->getSecret());
     }
 
-    /**
-     * @expectedException \Facebook\Exceptions\FacebookSDKException
-     */
-    public function testOverflowIntegersWillThrow()
-    {
-        $this->expectException('\Facebook\Exceptions\FacebookSDKException');
-
-        new FacebookApp(PHP_INT_MAX + 1, "foo");
-    }
-
-    public function testUnserializedIdsWillBeString()
-    {
-        $newApp = unserialize(serialize(new FacebookApp(1, "foo")));
-
-        $this->assertSame('1', $newApp->getId());
-    }
 }

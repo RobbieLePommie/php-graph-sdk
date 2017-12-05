@@ -54,7 +54,7 @@ class Facebook
     /**
      * @const string Version number of the Facebook PHP SDK.
      */
-    const VERSION = '5.7.0';
+    const VERSION = '6.0.0';
 
     /**
      * @const string Default Graph API version for requests.
@@ -89,7 +89,7 @@ class Facebook
     /**
      * @var UrlDetectionInterface|null The URL detection handler.
      */
-    protected FacebookUrlDetectionHandler $urlDetectionHandler;
+    protected UrlDetectionInterface $urlDetectionHandler;
 
     /**
      * @var PseudoRandomStringGeneratorInterface|null The cryptographically secure pseudo-random string generator.
@@ -128,7 +128,7 @@ class Facebook
         $config = array_merge([
             'app_id' => getenv(static::APP_ID_ENV_NAME),
             'app_secret' => getenv(static::APP_SECRET_ENV_NAME),
-            'default_graph_version' => static::DEFAULT_GRAPH_VERSION,
+            'default_graph_version' => null,
             'enable_beta_mode' => false,
             'http_client_handler' => null,
             'persistent_data_handler' => null,
@@ -153,7 +153,7 @@ class Facebook
         if (!is_string($config['app_secret']) || strlen($config['app_secret']) === 0) {
             throw new FacebookSDKException('Required "app_secret" key must be a string "' . static::APP_SECRET_ENV_NAME . '"');
         }
-        if (!is_string($config['default_graph_version']) || strlen($config['default_graph_version'] === 0 || !preg_match('/[0-9]{1,3}(\.[0-9]{1,2}){0,1}'))) {
+        if (!is_string($config['default_graph_version']) || strlen($config['default_graph_version']) === 0 || !preg_match('/^v[0-9]{1,3}(\.[0-9]{1,2}){0,1}$/', $config['default_graph_version'])) {
             throw new FacebookSDKException('Required "default_graph_version" must be a string in the format "99" or "9.99"');
         }
 
@@ -593,7 +593,7 @@ class Facebook
     /**
      * Upload a video in chunks.
      *
-     * @param int $target The id of the target node before the /videos edge.
+     * @param string $target The id of the target node before the /videos edge (e.g. page_id).
      * @param string $pathToFile The full path to the file.
      * @param array $metadata The metadata associated with the video file.
      * @param string|null $accessToken The access token.
@@ -604,13 +604,13 @@ class Facebook
      *
      * @throws FacebookSDKException
      */
-    public function uploadVideo(int $target, string $pathToFile, array $metadata = [], $accessToken = null, int $maxTransferTries = 5, ?string $graphVersion = null) : array
+    public function uploadVideo(string $target, string $pathToFile, array $metadata = [], $accessToken = null, int $maxTransferTries = 5, ?string $graphVersion = null) : array
     {
         $accessToken = $accessToken ?: $this->defaultAccessToken;
         $graphVersion = $graphVersion ?: $this->defaultGraphVersion;
 
         $uploader = new FacebookResumableUploader($this->app, $this->client, $accessToken, $graphVersion);
-        $endpoint = '/'.$target.'/videos';
+        $endpoint = '/' . $target . '/videos';
         $file = $this->videoToUpload($pathToFile);
         $chunk = $uploader->start($endpoint, $file);
 

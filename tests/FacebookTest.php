@@ -39,6 +39,7 @@ class FacebookTest extends \PHPUnit\Framework\TestCase
     protected $config = [
         'app_id' => '1337',
         'app_secret' => 'foo_secret',
+        'default_graph_version' => Facebook::DEFAULT_GRAPH_VERSION
     ];
 
     /**
@@ -67,6 +68,35 @@ class FacebookTest extends \PHPUnit\Framework\TestCase
         putenv(Facebook::APP_SECRET_ENV_NAME.'=');
         $config = [
             'app_id' => 'foo_id',
+        ];
+        new Facebook($config);
+    }
+
+    /**
+     * @expectedException \Facebook\Exceptions\FacebookSDKException
+     */
+    public function testInstantiatingWithoutGraphVersionThrows()
+    {
+        $this->expectException('\Facebook\Exceptions\FacebookSDKException');
+
+        $config = [
+            'app_id' => 'foo_id',
+            'app_secret' => 'bar'
+        ];
+        new Facebook($config);
+    }
+
+    /**
+     * @expectedException \Facebook\Exceptions\FacebookSDKException
+     */
+    public function testInstantiatingWithInvalidGraphVersionThrows()
+    {
+        $this->expectException('\Facebook\Exceptions\FacebookSDKException');
+
+        $config = [
+            'app_id' => 'foo_id',
+            'app_secret' => 'bar',
+            'default_graph_version' => 'XXX'
         ];
         new Facebook($config);
     }
@@ -219,25 +249,6 @@ class FacebookTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testMcryptCsprgCanBeForced()
-    {
-        if (!function_exists('mcrypt_create_iv')) {
-            $this->markTestSkipped(
-                'Mcrypt must be installed to test mcrypt_create_iv().'
-            );
-        }
-
-        $config = array_merge($this->config, [
-            'persistent_data_handler' => 'memory', // To keep session errors from happening
-            'pseudo_random_string_generator' => 'mcrypt'
-        ]);
-        $fb = new Facebook($config);
-        $this->assertInstanceOf(
-            'Facebook\PseudoRandomString\McryptPseudoRandomStringGenerator',
-            $fb->getRedirectLoginHelper()->getPseudoRandomStringGenerator()
-        );
-    }
-
     public function testOpenSslCsprgCanBeForced()
     {
         if (!function_exists('openssl_random_pseudo_bytes')) {
@@ -300,7 +311,7 @@ class FacebookTest extends \PHPUnit\Framework\TestCase
         $config = array_merge($this->config, [
             'default_access_token' => 'foo_token',
             'enable_beta_mode' => true,
-            'default_graph_version' => 'v1337',
+            'default_graph_version' => 'v133',
         ]);
         $fb = new Facebook($config);
 
@@ -308,7 +319,7 @@ class FacebookTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('1337', $request->getApp()->getId());
         $this->assertEquals('foo_secret', $request->getApp()->getSecret());
         $this->assertEquals('foo_token', (string)$request->getAccessToken());
-        $this->assertEquals('v1337', $request->getGraphVersion());
+        $this->assertEquals('v133', $request->getGraphVersion());
         $this->assertEquals(
             FacebookClient::BASE_GRAPH_URL_BETA,
             $fb->getClient()->getBaseGraphUrl()
@@ -320,7 +331,7 @@ class FacebookTest extends \PHPUnit\Framework\TestCase
         $config = array_merge($this->config, [
             'default_access_token' => 'foo_token',
             'enable_beta_mode' => true,
-            'default_graph_version' => 'v1337',
+            'default_graph_version' => 'v133',
         ]);
         $fb = new Facebook($config);
 
@@ -328,7 +339,7 @@ class FacebookTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('1337', $batchRequest->getApp()->getId());
         $this->assertEquals('foo_secret', $batchRequest->getApp()->getSecret());
         $this->assertEquals('foo_token', (string)$batchRequest->getAccessToken());
-        $this->assertEquals('v1337', $batchRequest->getGraphVersion());
+        $this->assertEquals('v133', $batchRequest->getGraphVersion());
         $this->assertEquals(
             FacebookClient::BASE_GRAPH_URL_BETA,
             $fb->getClient()->getBaseGraphUrl()
@@ -402,9 +413,13 @@ class FacebookTest extends \PHPUnit\Framework\TestCase
 
     public function testCanGetSuccessfulTransferWithMaxTries()
     {
-        $config = array_merge($this->config, [
-          'http_client_handler' => new FakeGraphApiForResumableUpload(),
-        ]);
+        $config = array_merge(
+            $this->config,
+            [
+                'http_client_handler' => new FakeGraphApiForResumableUpload(),
+                'default_graph_version' => Facebook::DEFAULT_GRAPH_VERSION
+            ]
+        );
         $fb = new Facebook($config);
         $response = $fb->uploadVideo('me', __DIR__.'/foo.txt', [], 'foo-token', 3);
         $this->assertEquals([

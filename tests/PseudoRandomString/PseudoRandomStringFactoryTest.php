@@ -56,9 +56,6 @@ class PseudoRandomStringFactoryTest extends \PHPUnit\Framework\TestCase
         if (function_exists('random_bytes')) {
             $providers[] = ['random_bytes', self::COMMON_NAMESPACE . 'RandomBytesPseudoRandomStringGenerator'];
         }
-        if (function_exists('mcrypt_create_iv')) {
-            $providers[] = ['mcrypt', self::COMMON_NAMESPACE . 'McryptPseudoRandomStringGenerator'];
-        }
         if (function_exists('openssl_random_pseudo_bytes')) {
             $providers[] = ['openssl', self::COMMON_NAMESPACE . 'OpenSslPseudoRandomStringGenerator'];
         }

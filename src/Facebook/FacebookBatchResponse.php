@@ -102,9 +102,9 @@ class FacebookBatchResponse extends FacebookResponse implements IteratorAggregat
         $originalRequest = $this->batchRequest[$key]['request'] ?? null;
 
         $httpResponseBody = $response['body'] ?? null;
-        $httpResponseCode = $response['code'] ?? null;
+        $httpResponseCode = (int)($response['code'] ?? null);
 
-        $httpResponseHeaders = array_column($response['headers'], 'value', 'name');
+        $httpResponseHeaders = array_column($response['headers'] ?? [], 'value', 'name');
 
         $this->responses[$originalRequestName] = new FacebookResponse(
             $originalRequest,

@@ -147,7 +147,7 @@ class GraphNode implements \ArrayAccess, \IteratorAggregate
      *
      * @return bool
      */
-    public function offsetExists(string $key) : bool
+    public function offsetExists($key)
     {
         return array_key_exists($key, $this->fields);
     }
@@ -159,7 +159,7 @@ class GraphNode implements \ArrayAccess, \IteratorAggregate
      *
      * @return mixed
      */
-    public function offsetGet(string $key)
+    public function offsetGet($key)
     {
         return $this->fields[$key];
     }
@@ -172,7 +172,7 @@ class GraphNode implements \ArrayAccess, \IteratorAggregate
      *
      * @return void
      */
-    public function offsetSet(string $key, $value) : void
+    public function offsetSet($key, $value)
     {
         if (is_null($key)) {
             $this->fields[] = $value;
@@ -188,7 +188,7 @@ class GraphNode implements \ArrayAccess, \IteratorAggregate
      *
      * @return void
      */
-    public function offsetUnset(string $key) : void
+    public function offsetUnset($key)
     {
         unset($this->fields[$key]);
     }
@@ -213,12 +213,13 @@ class GraphNode implements \ArrayAccess, \IteratorAggregate
      *
      * @return array
      */
-    public function castFields(array $data) : array
+    private function castFields(array $data) : array
     {
         $fields = [];
 
         foreach ($data as $k => $v) {
-            if ($this->shouldCastAsDateTime($k)
+            if (is_string($k)
+                && $this->shouldCastAsDateTime($k)
                 && (is_numeric($v)
                     || $this->isIso8601DateString($v))
             ) {
@@ -239,7 +240,7 @@ class GraphNode implements \ArrayAccess, \IteratorAggregate
      *
      * @return array
      */
-    public function uncastFields() : array
+    private function uncastFields() : array
     {
         $fields = $this->asArray();
 
@@ -292,6 +293,7 @@ class GraphNode implements \ArrayAccess, \IteratorAggregate
             'created_time',
             'updated_time',
             'start_time',
+            'stop_time',
             'end_time',
             'backdated_time',
             'issued_at',
