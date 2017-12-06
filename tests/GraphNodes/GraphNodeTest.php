@@ -24,6 +24,8 @@
 namespace Facebook\Tests\GraphNodes;
 
 use Facebook\GraphNodes\GraphNode;
+use Facebook\GraphNodes\Birthday;
+use PHPUnit\Framework\TestCase;
 
 class GraphNodeTest extends \PHPUnit\Framework\TestCase
 {
@@ -115,6 +117,13 @@ class GraphNodeTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf('DateTime', $dateTime);
         $this->assertEquals('Tue, 15 Jul 14 03:44:53 +0000', $prettyDate);
         $this->assertEquals(1405395893, $timeStamp);
+    }
+
+    public function testCastBirthdayFieldValueToBirthday()
+    {
+        $graphNode = new GraphNode(['birthday' => '11/02/1989']);
+
+        $this->assertInstanceOf(Birthday::class, $graphNode->getField('birthday'));
     }
 
     public function testGettingGraphNodeAsAnArrayWillNotUncastTheDateTimeObject()
