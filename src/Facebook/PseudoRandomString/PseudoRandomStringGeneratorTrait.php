@@ -33,7 +33,7 @@ trait PseudoRandomStringGeneratorTrait
      *
      * @throws \InvalidArgumentException
      */
-    public function validateLength($length)
+    public function validateLength(int $length)
     {
         if (!is_int($length)) {
             throw new \InvalidArgumentException('getPseudoRandomString() expects an integer for the string length');
@@ -52,7 +52,7 @@ trait PseudoRandomStringGeneratorTrait
      *
      * @return string
      */
-    public function binToHex($binaryData, $length)
+    public function binToHex(string $binaryData, int $length) : string
     {
         return \substr(\bin2hex($binaryData), 0, $length);
     }

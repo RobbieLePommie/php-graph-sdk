@@ -170,7 +170,7 @@ class FacebookResponse
      */
     public function getETag() : ?string
     {
-        return isset($this->headers['ETag']) ? $this->headers['ETag'] : null;
+        return $this->headers['ETag'] ?? null;
     }
 
     /**
@@ -180,7 +180,7 @@ class FacebookResponse
      */
     public function getGraphVersion() : ?string
     {
-        return isset($this->headers['Facebook-API-Version']) ? $this->headers['Facebook-API-Version'] : null;
+        return $this->headers['Facebook-API-Version'] ?? null;
     }
 
     /**

@@ -41,7 +41,7 @@ class FacebookMemoryPersistentDataHandler implements PersistentDataInterface
      */
     public function get($key)
     {
-        return isset($this->sessionData[$key]) ? $this->sessionData[$key] : null;
+        return $this->sessionData[$key] ?? null;
     }
 
     /**

@@ -260,7 +260,7 @@ class GraphNodeFactory
         static::validateSubclass($subclassName);
 
         // Remember the parent node ID
-        $parentNodeId = isset($data['id']) ? $data['id'] : null;
+        $parentNodeId = $data['id'] ?? null;
 
         $items = [];
 
@@ -271,9 +271,7 @@ class GraphNodeFactory
                 // This is always empty on the GraphNode collection, but subclasses can define
                 // their own array of smart-casting types.
                 $graphObjectMap = $subclassName::getObjectMap();
-                $objectSubClass = isset($graphObjectMap[$k])
-                    ? $graphObjectMap[$k]
-                    : null;
+                $objectSubClass = $graphObjectMap[$k] ?? null;
 
                 // Could be a GraphEdge or GraphNode
                 $items[$k] = $this->castAsGraphNodeOrGraphEdge($v, $objectSubClass, $k, $parentNodeId);

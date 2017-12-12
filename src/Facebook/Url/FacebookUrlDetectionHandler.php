@@ -148,7 +148,7 @@ class FacebookUrlDetectionHandler implements UrlDetectionInterface
      */
     protected function getServerVar($key)
     {
-        return isset($_SERVER[$key]) ? $_SERVER[$key] : '';
+        return $_SERVER[$key] ?? '';
     }
 
     /**

@@ -43,7 +43,7 @@ class PseudoRandomStringGeneratorFactory
      *
      * @return PseudoRandomStringGeneratorInterface
      */
-    public static function createPseudoRandomStringGenerator($generator)
+    public static function createPseudoRandomStringGenerator($generator) : PseudoRandomStringGeneratorInterface
     {
         if (!$generator) {
             return self::detectDefaultPseudoRandomStringGenerator();
@@ -76,7 +76,7 @@ class PseudoRandomStringGeneratorFactory
      *
      * @return PseudoRandomStringGeneratorInterface
      */
-    private static function detectDefaultPseudoRandomStringGenerator()
+    private static function detectDefaultPseudoRandomStringGenerator() : ?PseudoRandomStringGeneratorInterface
     {
         // Check for PHP 7's CSPRNG first to keep mcrypt deprecation messages from appearing in PHP 7.1.
         if (function_exists('random_bytes')) {

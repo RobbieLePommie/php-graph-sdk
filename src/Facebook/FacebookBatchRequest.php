@@ -98,7 +98,7 @@ class FacebookBatchRequest extends FacebookRequest implements IteratorAggregate,
         // File uploads
         $attachedFiles = $this->extractFileAttachments($request);
 
-        $name = isset($options['name']) ? $options['name'] : null;
+        $name = $options['name'] ?? null;
 
         unset($options['name']);
 
@@ -318,6 +318,6 @@ class FacebookBatchRequest extends FacebookRequest implements IteratorAggregate,
      */
     public function offsetGet($offset)
     {
-        return isset($this->requests[$offset]) ? $this->requests[$offset] : null;
+        return $this->requests[$offset] ?? null;
     }
 }

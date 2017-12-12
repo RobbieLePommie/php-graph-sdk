@@ -74,12 +74,12 @@ class Facebook
     /**
      * @var FacebookApp The FacebookApp entity.
      */
-    protected $app;
+    protected FacebookApp $app;
 
     /**
      * @var FacebookClient The Facebook client service.
      */
-    protected $client;
+    protected FacebookClient $client;
 
     /**
      * @var OAuth2Client The OAuth 2.0 client service.
@@ -89,27 +89,27 @@ class Facebook
     /**
      * @var UrlDetectionInterface|null The URL detection handler.
      */
-    protected $urlDetectionHandler;
+    protected FacebookUrlDetectionHandler $urlDetectionHandler;
 
     /**
      * @var PseudoRandomStringGeneratorInterface|null The cryptographically secure pseudo-random string generator.
      */
-    protected $pseudoRandomStringGenerator;
+    protected PseudoRandomStringGeneratorInterface $pseudoRandomStringGenerator;
 
     /**
      * @var AccessToken|null The default access token to use with requests.
      */
-    protected $defaultAccessToken;
+    protected ?AccessToken $defaultAccessToken = null;
 
     /**
      * @var string|null The default Graph version we want to use.
      */
-    protected $defaultGraphVersion;
+    protected string $defaultGraphVersion;
 
     /**
      * @var PersistentDataInterface|null The persistent data handler.
      */
-    protected $persistentDataHandler;
+    protected PersistentDataInterface $persistentDataHandler;
 
     /**
      * @var FacebookResponse|FacebookBatchResponse|null Stores the last request made to Graph.
@@ -143,6 +143,19 @@ class Facebook
         if (!$config['app_secret']) {
             throw new FacebookSDKException('Required "app_secret" key not supplied in config and could not find fallback environment variable "' . static::APP_SECRET_ENV_NAME . '"');
         }
+        if (!$config['default_graph_version']) {
+            throw new FacebookSDKException('Required "default_graph_version" key not supplied in config');
+        }
+
+        if (!is_string($config['app_id']) || strlen($config['app_id']) === 0) {
+            throw new FacebookSDKException('Required "app_id" key must be a string "' . static::APP_ID_ENV_NAME . '"');
+        }
+        if (!is_string($config['app_secret']) || strlen($config['app_secret']) === 0) {
+            throw new FacebookSDKException('Required "app_secret" key must be a string "' . static::APP_SECRET_ENV_NAME . '"');
+        }
+        if (!is_string($config['default_graph_version']) || strlen($config['default_graph_version'] === 0 || !preg_match('/[0-9]{1,3}(\.[0-9]{1,2}){0,1}'))) {
+            throw new FacebookSDKException('Required "default_graph_version" must be a string in the format "99" or "9.99"');
+        }
 
         $this->app = new FacebookApp($config['app_id'], $config['app_secret']);
         $this->client = new FacebookClient(
@@ -162,7 +175,6 @@ class Facebook
             $this->setDefaultAccessToken($config['default_access_token']);
         }
 
-        // @todo v6: Throw an InvalidArgumentException if "default_graph_version" is not set
         $this->defaultGraphVersion = $config['default_graph_version'];
     }
 
@@ -171,7 +183,7 @@ class Facebook
      *
      * @return FacebookApp
      */
-    public function getApp()
+    public function getApp() : FacebookApp
     {
         return $this->app;
     }
@@ -181,7 +193,7 @@ class Facebook
      *
      * @return FacebookClient
      */
-    public function getClient()
+    public function getClient() : FacebookClient
     {
         return $this->client;
     }
@@ -217,7 +229,7 @@ class Facebook
      *
      * @return UrlDetectionInterface
      */
-    public function getUrlDetectionHandler()
+    public function getUrlDetectionHandler() : UrlDetectionInterface
     {
         return $this->urlDetectionHandler;
     }
@@ -227,7 +239,7 @@ class Facebook
      *
      * @param UrlDetectionInterface $urlDetectionHandler
      */
-    private function setUrlDetectionHandler(UrlDetectionInterface $urlDetectionHandler)
+    private function setUrlDetectionHandler(UrlDetectionInterface $urlDetectionHandler) : void
     {
         $this->urlDetectionHandler = $urlDetectionHandler;
     }
@@ -237,7 +249,7 @@ class Facebook
      *
      * @return AccessToken|null
      */
-    public function getDefaultAccessToken()
+    public function getDefaultAccessToken() : ?AccessToken
     {
         return $this->defaultAccessToken;
     }
@@ -273,7 +285,7 @@ class Facebook
      *
      * @return string
      */
-    public function getDefaultGraphVersion()
+    public function getDefaultGraphVersion() : string
     {
         return $this->defaultGraphVersion;
     }
@@ -283,7 +295,7 @@ class Facebook
      *
      * @return FacebookRedirectLoginHelper
      */
-    public function getRedirectLoginHelper()
+    public function getRedirectLoginHelper() : FacebookRedirectLoginHelper
     {
         return new FacebookRedirectLoginHelper(
             $this->getOAuth2Client(),
@@ -298,7 +310,7 @@ class Facebook
      *
      * @return FacebookJavaScriptHelper
      */
-    public function getJavaScriptHelper()
+    public function getJavaScriptHelper() : FacebookJavaScriptHelper
     {
         return new FacebookJavaScriptHelper($this->app, $this->client, $this->defaultGraphVersion);
     }
@@ -308,7 +320,7 @@ class Facebook
      *
      * @return FacebookCanvasHelper
      */
-    public function getCanvasHelper()
+    public function getCanvasHelper() : FacebookCanvasHelper
     {
         return new FacebookCanvasHelper($this->app, $this->client, $this->defaultGraphVersion);
     }
@@ -318,7 +330,7 @@ class Facebook
      *
      * @return FacebookPageTabHelper
      */
-    public function getPageTabHelper()
+    public function getPageTabHelper() : FacebookPageTabHelper
     {
         return new FacebookPageTabHelper($this->app, $this->client, $this->defaultGraphVersion);
     }
@@ -465,7 +477,7 @@ class Facebook
      *
      * @throws FacebookSDKException
      */
-    public function sendRequest($method, $endpoint, array $params = [], $accessToken = null, $eTag = null, $graphVersion = null)  : FacebookResponse
+    public function sendRequest(string $method, string $endpoint, array $params = [], $accessToken = null, ?string $eTag = null, ?string $graphVersion = null)  : FacebookResponse
     {
         $accessToken = $accessToken ?: $this->defaultAccessToken;
         $graphVersion = $graphVersion ?: $this->defaultGraphVersion;
@@ -559,7 +571,7 @@ class Facebook
      *
      * @throws FacebookSDKException
      */
-    public function fileToUpload($pathToFile)
+    public function fileToUpload(string $pathToFile) : FacebookFile
     {
         return new FacebookFile($pathToFile);
     }
@@ -573,7 +585,7 @@ class Facebook
      *
      * @throws FacebookSDKException
      */
-    public function videoToUpload($pathToFile)
+    public function videoToUpload(string $pathToFile) : FacebookVideo
     {
         return new FacebookVideo($pathToFile);
     }
@@ -592,7 +604,7 @@ class Facebook
      *
      * @throws FacebookSDKException
      */
-    public function uploadVideo($target, $pathToFile, $metadata = [], $accessToken = null, $maxTransferTries = 5, $graphVersion = null)
+    public function uploadVideo(int $target, string $pathToFile, array $metadata = [], $accessToken = null, int $maxTransferTries = 5, ?string $graphVersion = null) : array
     {
         $accessToken = $accessToken ?: $this->defaultAccessToken;
         $graphVersion = $graphVersion ?: $this->defaultGraphVersion;
@@ -624,7 +636,7 @@ class Facebook
      *
      * @throws FacebookSDKException
      */
-    private function maxTriesTransfer(FacebookResumableUploader $uploader, $endpoint, FacebookTransferChunk $chunk, $retryCountdown)
+    private function maxTriesTransfer(FacebookResumableUploader $uploader, string $endpoint, FacebookTransferChunk $chunk, int $retryCountdown) : FacebookTransferChunk
     {
         $newChunk = $uploader->transfer($endpoint, $chunk, $retryCountdown < 1);
 
