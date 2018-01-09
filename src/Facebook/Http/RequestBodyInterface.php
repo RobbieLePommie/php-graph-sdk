@@ -36,5 +36,5 @@ interface RequestBodyInterface
      *
      * @return string
      */
-    public function getBody();
+    public function getBody() : string;
 }

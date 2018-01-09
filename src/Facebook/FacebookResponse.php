@@ -264,23 +264,6 @@ class FacebookResponse
     }
 
     /**
-     * Instantiate a new GraphObject from response.
-     *
-     * @param string|null $subclassName The GraphNode subclass to cast to.
-     *
-     * @return \Facebook\GraphNodes\GraphObject
-     *
-     * @throws FacebookSDKException
-     *
-     * @deprecated 5.0.0 getGraphObject() has been renamed to getGraphNode()
-     * @todo v6: Remove this method
-     */
-    public function getGraphObject($subclassName = null)
-    {
-        return $this->getGraphNode($subclassName);
-    }
-
-    /**
      * Instantiate a new GraphNode from response.
      *
      * @param string|null $subclassName The GraphNode subclass to cast to.

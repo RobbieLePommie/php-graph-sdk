@@ -34,7 +34,7 @@ class GraphUser extends GraphNode
     /**
      * @var array Maps object key names to Graph object types.
      */
-    protected static array $graphObjectMap = [
+    protected static array $graphNodeMap = [
         'hometown' => '\Facebook\GraphNodes\GraphPage',
         'location' => '\Facebook\GraphNodes\GraphPage',
         'significant_other' => '\Facebook\GraphNodes\GraphUser',
@@ -46,7 +46,7 @@ class GraphUser extends GraphNode
      *
      * @return string|null
      */
-    public function getId()
+    public function getId() : ?string
     {
         return $this->getField('id');
     }
@@ -56,7 +56,7 @@ class GraphUser extends GraphNode
      *
      * @return string|null
      */
-    public function getName()
+    public function getName() : ?string
     {
         return $this->getField('name');
     }
@@ -66,7 +66,7 @@ class GraphUser extends GraphNode
      *
      * @return string|null
      */
-    public function getFirstName()
+    public function getFirstName() : ?string
     {
         return $this->getField('first_name');
     }
@@ -76,7 +76,7 @@ class GraphUser extends GraphNode
      *
      * @return string|null
      */
-    public function getMiddleName()
+    public function getMiddleName() : ?string
     {
         return $this->getField('middle_name');
     }
@@ -86,7 +86,7 @@ class GraphUser extends GraphNode
      *
      * @return string|null
      */
-    public function getLastName()
+    public function getLastName() : ?string
     {
         return $this->getField('last_name');
     }
@@ -96,7 +96,7 @@ class GraphUser extends GraphNode
      *
      * @return string|null
      */
-    public function getEmail()
+    public function getEmail() : ?string
     {
         return $this->getField('email');
     }
@@ -106,7 +106,7 @@ class GraphUser extends GraphNode
      *
      * @return string|null
      */
-    public function getGender()
+    public function getGender() : ?string
     {
         return $this->getField('gender');
     }
@@ -116,7 +116,7 @@ class GraphUser extends GraphNode
      *
      * @return string|null
      */
-    public function getLink()
+    public function getLink() : ?string
     {
         return $this->getField('link');
     }
@@ -126,7 +126,7 @@ class GraphUser extends GraphNode
      *
      * @return Birthday|null
      */
-    public function getBirthday()
+    public function getBirthday() : ?Birthday
     {
         return $this->getField('birthday');
     }
@@ -136,7 +136,7 @@ class GraphUser extends GraphNode
      *
      * @return GraphPage|null
      */
-    public function getLocation()
+    public function getLocation() : ?GraphPage
     {
         return $this->getField('location');
     }
@@ -146,7 +146,7 @@ class GraphUser extends GraphNode
      *
      * @return GraphPage|null
      */
-    public function getHometown()
+    public function getHometown() : ?GraphPage
     {
         return $this->getField('hometown');
     }
@@ -156,7 +156,7 @@ class GraphUser extends GraphNode
      *
      * @return GraphUser|null
      */
-    public function getSignificantOther()
+    public function getSignificantOther() : ?GraphUser
     {
         return $this->getField('significant_other');
     }
@@ -166,7 +166,7 @@ class GraphUser extends GraphNode
      *
      * @return GraphPicture|null
      */
-    public function getPicture()
+    public function getPicture() : ?GraphPicture
     {
         return $this->getField('picture');
     }

@@ -24,6 +24,7 @@ FacebookApp requires the APP_ID to be a string (now fatal error)
 uploadVideo requires target node id to be string
 default_graph_version is now required
 graphNode->all is now getFields
+GraphObject / GraphObjectFactory removed
 
 
 ## Usage

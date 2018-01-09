@@ -55,9 +55,9 @@ class GraphEventTest extends \PHPUnit\Framework\TestCase
             ->once()
             ->andReturn($dataFromGraph);
         $factory = new GraphNodeFactory($this->responseMock);
-        $graphObject = $factory->makeGraphEvent();
+        $graphEventNode = $factory->makeGraphEvent();
 
-        $cover = $graphObject->getCover();
+        $cover = $graphEventNode->getCover();
         $this->assertInstanceOf('\Facebook\GraphNodes\GraphCoverPhoto', $cover);
     }
 
@@ -72,9 +72,9 @@ class GraphEventTest extends \PHPUnit\Framework\TestCase
             ->once()
             ->andReturn($dataFromGraph);
         $factory = new GraphNodeFactory($this->responseMock);
-        $graphObject = $factory->makeGraphEvent();
+        $graphEventNode = $factory->makeGraphEvent();
 
-        $place = $graphObject->getPlace();
+        $place = $graphEventNode->getPlace();
         $this->assertInstanceOf('\Facebook\GraphNodes\GraphPage', $place);
     }
 
@@ -89,9 +89,9 @@ class GraphEventTest extends \PHPUnit\Framework\TestCase
             ->once()
             ->andReturn($dataFromGraph);
         $factory = new GraphNodeFactory($this->responseMock);
-        $graphObject = $factory->makeGraphEvent();
+        $graphEventNode = $factory->makeGraphEvent();
 
-        $picture = $graphObject->getPicture();
+        $picture = $graphEventNode->getPicture();
         $this->assertInstanceOf('\Facebook\GraphNodes\GraphPicture', $picture);
     }
 
@@ -106,9 +106,9 @@ class GraphEventTest extends \PHPUnit\Framework\TestCase
             ->once()
             ->andReturn($dataFromGraph);
         $factory = new GraphNodeFactory($this->responseMock);
-        $graphObject = $factory->makeGraphEvent();
+        $graphEventNode = $factory->makeGraphEvent();
 
-        $parentGroup = $graphObject->getParentGroup();
+        $parentGroup = $graphEventNode->getParentGroup();
         $this->assertInstanceOf('\Facebook\GraphNodes\GraphGroup', $parentGroup);
     }
 }

@@ -34,7 +34,7 @@ class GraphNode implements \ArrayAccess, \IteratorAggregate
     /**
      * @var array Maps object key names to Graph object types.
      */
-    protected static array $graphObjectMap = [];
+    protected static array $graphNodeMap = [];
 
     /**
      * The fields contained in the node.
@@ -323,12 +323,12 @@ class GraphNode implements \ArrayAccess, \IteratorAggregate
     }
 
     /**
-     * Getter for $graphObjectMap.
+     * Getter for $graphNodeMap.
      *
      * @return array
      */
-    public static function getObjectMap()
+    public static function getNodeMap()
     {
-        return static::$graphObjectMap;
+        return static::$graphNodeMap;
     }
 }

@@ -61,12 +61,12 @@ class GraphNodeFactory
     /**
      * @var FacebookResponse The response entity from Graph.
      */
-    protected $response;
+    protected FacebookResponse $response;
 
     /**
      * @var array The decoded body of the FacebookResponse entity from Graph.
      */
-    protected $decodedBody;
+    protected array $decodedBody;
 
     /**
      * Init this Graph object.
@@ -88,7 +88,7 @@ class GraphNodeFactory
      *
      * @throws FacebookSDKException
      */
-    public function makeGraphNode($subclassName = null)
+    public function makeGraphNode(?string $subclassName = null) : GraphNode
     {
         $this->validateResponseAsArray();
         $this->validateResponseCastableAsGraphNode();
@@ -234,7 +234,7 @@ class GraphNodeFactory
      *
      * @throws FacebookSDKException
      */
-    public function validateResponseCastableAsGraphEdge()
+    public function validateResponseCastableAsGraphEdge() : void
     {
         if (!(isset($this->decodedBody['data']) && static::isCastableAsGraphEdge($this->decodedBody['data']))) {
             throw new FacebookSDKException(
@@ -254,7 +254,7 @@ class GraphNodeFactory
      *
      * @throws FacebookSDKException
      */
-    public function safelyMakeGraphNode(array $data, $subclassName = null)
+    public function safelyMakeGraphNode(array $data, ?string $subclassName = null)
     {
         $subclassName = $subclassName ?: static::BASE_GRAPH_NODE_CLASS;
         static::validateSubclass($subclassName);
@@ -267,11 +267,11 @@ class GraphNodeFactory
         foreach ($data as $k => $v) {
             // Array means could be recurable
             if (is_array($v)) {
-                // Detect any smart-casting from the $graphObjectMap array.
+                // Detect any smart-casting from the $graphNodeMap array.
                 // This is always empty on the GraphNode collection, but subclasses can define
                 // their own array of smart-casting types.
-                $graphObjectMap = $subclassName::getObjectMap();
-                $objectSubClass = $graphObjectMap[$k] ?? null;
+                $graphNodeMap = $subclassName::getNodeMap();
+                $objectSubClass = $graphNodeMap[$k] ?? null;
 
                 // Could be a GraphEdge or GraphNode
                 $items[$k] = $this->castAsGraphNodeOrGraphEdge($v, $objectSubClass, $k, $parentNodeId);
@@ -295,7 +295,7 @@ class GraphNodeFactory
      *
      * @throws FacebookSDKException
      */
-    public function castAsGraphNodeOrGraphEdge(array $data, $subclassName = null, $parentKey = null, $parentNodeId = null)
+    public function castAsGraphNodeOrGraphEdge(array $data, ?string $subclassName = null, ?string $parentKey = null, ?string $parentNodeId = null)
     {
         if (isset($data['data'])) {
             // Create GraphEdge
@@ -324,7 +324,7 @@ class GraphNodeFactory
      *
      * @throws FacebookSDKException
      */
-    public function safelyMakeGraphEdge(array $data, $subclassName = null, $parentKey = null, $parentNodeId = null)
+    public function safelyMakeGraphEdge(array $data, ?string $subclassName = null, ?string $parentKey = null, ?string $parentNodeId = null)
     {
         if (!isset($data['data'])) {
             throw new FacebookSDKException('Cannot cast data to GraphEdge. Expected a "data" key.', 620);
@@ -351,7 +351,7 @@ class GraphNodeFactory
      *
      * @return array
      */
-    public function getMetaData(array $data)
+    public function getMetaData(array $data) : array
     {
         unset($data['data']);
 
@@ -365,7 +365,7 @@ class GraphNodeFactory
      *
      * @return boolean
      */
-    public static function isCastableAsGraphEdge(array $data)
+    public static function isCastableAsGraphEdge(array $data) : bool
     {
         if ($data === []) {
             return true;
@@ -382,7 +382,7 @@ class GraphNodeFactory
      *
      * @throws FacebookSDKException
      */
-    public static function validateSubclass($subclassName)
+    public static function validateSubclass(string $subclassName) : void
     {
         if ($subclassName == static::BASE_GRAPH_NODE_CLASS || is_subclass_of($subclassName, static::BASE_GRAPH_NODE_CLASS)) {
             return;

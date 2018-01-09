@@ -45,7 +45,7 @@ class HttpClientsFactory
      *
      * @return FacebookHttpClientInterface
      */
-    public static function createHttpClient($handler)
+    public static function createHttpClient($handler) : FacebookHttpClientInterface
     {
         if (!$handler) {
             return self::detectDefaultClient();
@@ -85,7 +85,7 @@ class HttpClientsFactory
      *
      * @return FacebookHttpClientInterface
      */
-    private static function detectDefaultClient()
+    private static function detectDefaultClient() : FacebookHttpClientInterface
     {
         if (extension_loaded('curl')) {
             return new FacebookCurlHttpClient();

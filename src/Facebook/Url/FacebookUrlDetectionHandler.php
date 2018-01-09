@@ -34,7 +34,7 @@ class FacebookUrlDetectionHandler implements UrlDetectionInterface
     /**
      * @inheritdoc
      */
-    public function getCurrentUrl()
+    public function getCurrentUrl() : string
     {
         return $this->getHttpScheme() . '://' . $this->getHostName() . $this->getServerVar('REQUEST_URI');
     }
@@ -44,7 +44,7 @@ class FacebookUrlDetectionHandler implements UrlDetectionInterface
      *
      * @return string
      */
-    protected function getHttpScheme()
+    protected function getHttpScheme() : string
     {
         return $this->isBehindSsl() ? 'https' : 'http';
     }
@@ -54,7 +54,7 @@ class FacebookUrlDetectionHandler implements UrlDetectionInterface
      *
      * @return boolean
      */
-    protected function isBehindSsl()
+    protected function isBehindSsl() : bool
     {
         // Check for proxy first
         $protocol = $this->getHeader('X_FORWARDED_PROTO');
@@ -77,7 +77,7 @@ class FacebookUrlDetectionHandler implements UrlDetectionInterface
      *
      * @return boolean
      */
-    protected function protocolWithActiveSsl($protocol)
+    protected function protocolWithActiveSsl($protocol) : bool
     {
         $protocol = strtolower((string)$protocol);
 
@@ -93,7 +93,7 @@ class FacebookUrlDetectionHandler implements UrlDetectionInterface
      *
      * @return string
      */
-    protected function getHostName()
+    protected function getHostName() : string
     {
         // Check for proxy first
         $header = $this->getHeader('X_FORWARDED_HOST');
@@ -123,7 +123,7 @@ class FacebookUrlDetectionHandler implements UrlDetectionInterface
         return $host . $appendPort;
     }
 
-    protected function getCurrentPort()
+    protected function getCurrentPort() : string
     {
         // Check for proxy first
         $port = $this->getHeader('X_FORWARDED_PORT');
@@ -146,7 +146,7 @@ class FacebookUrlDetectionHandler implements UrlDetectionInterface
      *
      * @return string
      */
-    protected function getServerVar($key)
+    protected function getServerVar(string $key) : string
     {
         return $_SERVER[$key] ?? '';
     }
@@ -158,7 +158,7 @@ class FacebookUrlDetectionHandler implements UrlDetectionInterface
      *
      * @return string
      */
-    protected function getHeader($key)
+    protected function getHeader(string $key) : string
     {
         return $this->getServerVar('HTTP_' . $key);
     }
@@ -171,7 +171,7 @@ class FacebookUrlDetectionHandler implements UrlDetectionInterface
      *
      * @return boolean
      */
-    protected function isValidForwardedHost($header)
+    protected function isValidForwardedHost(string $header) : string
     {
         $elements = explode(',', $header);
         $host = $elements[count($elements) - 1];

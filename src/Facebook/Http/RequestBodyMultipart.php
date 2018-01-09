@@ -40,12 +40,12 @@ class RequestBodyMultipart implements RequestBodyInterface
     /**
      * @var string The boundary.
      */
-    private $boundary;
+    private string $boundary;
 
     /**
      * @var array The parameters to send with this request.
      */
-    private $params;
+    private array $params;
 
     /**
      * @var array The files to send with this request.
@@ -57,7 +57,7 @@ class RequestBodyMultipart implements RequestBodyInterface
      * @param array  $files    The files to send with this request.
      * @param string $boundary Provide a specific boundary.
      */
-    public function __construct(array $params = [], array $files = [], $boundary = null)
+    public function __construct(array $params = [], array $files = [], ?string $boundary = null)
     {
         $this->params = $params;
         $this->files = $files;
@@ -67,7 +67,7 @@ class RequestBodyMultipart implements RequestBodyInterface
     /**
      * @inheritdoc
      */
-    public function getBody()
+    public function getBody() : string
     {
         $body = '';
 
@@ -93,7 +93,7 @@ class RequestBodyMultipart implements RequestBodyInterface
      *
      * @return string
      */
-    public function getBoundary()
+    public function getBoundary() : string
     {
         return $this->boundary;
     }
@@ -106,7 +106,7 @@ class RequestBodyMultipart implements RequestBodyInterface
      *
      * @return string
      */
-    private function getFileString($name, FacebookFile $file)
+    private function getFileString(string $name, FacebookFile $file) : string
     {
         return sprintf(
             "--%s\r\nContent-Disposition: form-data; name=\"%s\"; filename=\"%s\"%s\r\n\r\n%s\r\n",
@@ -126,7 +126,7 @@ class RequestBodyMultipart implements RequestBodyInterface
      *
      * @return string
      */
-    private function getParamString($name, $value)
+    private function getParamString(string $name, string $value) : string
     {
         return sprintf(
             "--%s\r\nContent-Disposition: form-data; name=\"%s\"\r\n\r\n%s\r\n",
@@ -143,7 +143,7 @@ class RequestBodyMultipart implements RequestBodyInterface
      *
      * @return array
      */
-    private function getNestedParams(array $params)
+    private function getNestedParams(array $params) : array
     {
         $query = http_build_query($params, '', '&');
         $params = explode('&', $query);
@@ -164,7 +164,7 @@ class RequestBodyMultipart implements RequestBodyInterface
      *
      * @return string
      */
-    protected function getFileHeaders(FacebookFile $file)
+    protected function getFileHeaders(FacebookFile $file) : string
     {
         return "\r\nContent-Type: {$file->getMimetype()}";
     }

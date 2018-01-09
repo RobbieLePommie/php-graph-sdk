@@ -16,7 +16,7 @@ class MyLaravelUrlDetectionHandler implements UrlDetectionInterface
   /**
    * @inheritdoc
    */
-  public function getCurrentUrl()
+  public function getCurrentUrl() : string
   {
     return \Request::url();
   }

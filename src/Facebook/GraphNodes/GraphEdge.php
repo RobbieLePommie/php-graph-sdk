@@ -38,29 +38,29 @@ class GraphEdge implements \ArrayAccess, \Countable, \IteratorAggregate
     /**
      * @var FacebookRequest The original request that generated this data.
      */
-    protected $request;
+    protected FacebookRequest $request;
 
     /**
      * @var array An array of Graph meta data like pagination, etc.
      */
-    protected $metaData = [];
+    protected array $metaData = [];
 
     /**
      * @var string|null The parent Graph edge endpoint that generated the list.
      */
-    protected $parentEdgeEndpoint;
+    protected ?string $parentEdgeEndpoint;
 
     /**
      * @var string|null The subclass of the child GraphNode's.
      */
-    protected $subclassName;
+    protected ?string $subclassName;
 
     /**
      * The items contained in the collection.
      *
      * @var array
      */
-    protected $items = [];
+    protected array $items = [];
 
     /**
      * Init this collection of GraphNode's.
@@ -71,7 +71,7 @@ class GraphEdge implements \ArrayAccess, \Countable, \IteratorAggregate
      * @param string|null     $parentEdgeEndpoint The parent Graph edge endpoint that generated the list.
      * @param string|null     $subclassName       The subclass of the child GraphNode's.
      */
-    public function __construct(FacebookRequest $request, array $data = [], array $metaData = [], $parentEdgeEndpoint = null, $subclassName = null)
+    public function __construct(FacebookRequest $request, array $data = [], array $metaData = [], ?string $parentEdgeEndpoint = null, ?string $subclassName = null)
     {
         $this->request = $request;
         $this->metaData = $metaData;
@@ -88,7 +88,7 @@ class GraphEdge implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @return mixed
      */
-    public function getField($name, $default = null)
+    public function getField(string $name, $default = null)
     {
         if (isset($this->items[$name])) {
             return $this->items[$name];
@@ -102,7 +102,7 @@ class GraphEdge implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @return array
      */
-    public function getFieldNames()
+    public function getFieldNames() : array
     {
         return array_keys($this->items);
     }
@@ -112,7 +112,7 @@ class GraphEdge implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @return array
      */
-    public function all()
+    public function all() : array
     {
         return $this->items;
     }
@@ -122,7 +122,7 @@ class GraphEdge implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @return array
      */
-    public function asArray()
+    public function asArray() : array
     {
         return array_map(function ($value) {
             if ($value instanceof GraphNode || $value instanceof GraphEdge) {
@@ -154,7 +154,7 @@ class GraphEdge implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @return string
      */
-    public function asJson($options = 0)
+    public function asJson($options = 0) : string
     {
         return json_encode($this->asArray(), $options);
     }
@@ -164,7 +164,7 @@ class GraphEdge implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @return int
      */
-    public function count()
+    public function count() : int
     {
         return count($this->items);
     }
@@ -174,7 +174,7 @@ class GraphEdge implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @return \ArrayIterator
      */
-    public function getIterator()
+    public function getIterator() : \ArrayIterator
     {
         return new \ArrayIterator($this->items);
     }
@@ -237,7 +237,7 @@ class GraphEdge implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @return string
      */
-    public function __toString()
+    public function __toString() : string
     {
         return $this->asJson();
     }
@@ -247,7 +247,7 @@ class GraphEdge implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @return string|null
      */
-    public function getParentGraphEdge()
+    public function getParentGraphEdge() : ?string
     {
         return $this->parentEdgeEndpoint;
     }
@@ -257,7 +257,7 @@ class GraphEdge implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @return string|null
      */
-    public function getSubClassName()
+    public function getSubClassName() : ?string
     {
         return $this->subclassName;
     }
@@ -267,7 +267,7 @@ class GraphEdge implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @return array
      */
-    public function getMetaData()
+    public function getMetaData() : array
     {
         return $this->metaData;
     }
@@ -277,7 +277,7 @@ class GraphEdge implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @return string|null
      */
-    public function getNextCursor()
+    public function getNextCursor() : ?string
     {
         return $this->getCursor('after');
     }
@@ -287,7 +287,7 @@ class GraphEdge implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @return string|null
      */
-    public function getPreviousCursor()
+    public function getPreviousCursor() : ?string
     {
         return $this->getCursor('before');
     }
@@ -299,7 +299,7 @@ class GraphEdge implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @return string|null
      */
-    public function getCursor($direction)
+    public function getCursor(string $direction) : ?string
     {
         if (isset($this->metaData['paging']['cursors'][$direction])) {
             return $this->metaData['paging']['cursors'][$direction];
@@ -317,7 +317,7 @@ class GraphEdge implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @throws FacebookSDKException
      */
-    public function getPaginationUrl($direction)
+    public function getPaginationUrl(string $direction) : ?string
     {
         $this->validateForPagination();
 
@@ -336,7 +336,7 @@ class GraphEdge implements \ArrayAccess, \Countable, \IteratorAggregate
      *
      * @throws FacebookSDKException
      */
-    public function validateForPagination()
+    public function validateForPagination() : void
     {
         if ($this->request->getMethod() !== 'GET') {
             throw new FacebookSDKException('You can only paginate on a GET request.', 720);

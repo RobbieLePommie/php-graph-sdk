@@ -69,7 +69,7 @@ class Birthday extends DateTime
      *
      * @return bool
      */
-    public function hasDate()
+    public function hasDate() : bool
     {
         return $this->hasDate;
     }
@@ -79,7 +79,7 @@ class Birthday extends DateTime
      *
      * @return bool
      */
-    public function hasYear()
+    public function hasYear() : bool
     {
         return $this->hasYear;
     }

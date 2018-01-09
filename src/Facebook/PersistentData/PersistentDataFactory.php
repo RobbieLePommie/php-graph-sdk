@@ -42,7 +42,7 @@ class PersistentDataFactory
      *
      * @return PersistentDataInterface
      */
-    public static function createPersistentDataHandler($handler)
+    public static function createPersistentDataHandler($handler) : PersistentDataInterface
     {
         if (!$handler) {
             return session_status() === PHP_SESSION_ACTIVE

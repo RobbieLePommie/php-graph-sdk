@@ -40,12 +40,12 @@ class FacebookBatchRequest extends FacebookRequest implements IteratorAggregate,
     /**
      * @var array An array of FacebookRequest entities to send.
      */
-    protected $requests = [];
+    protected array $requests = [];
 
     /**
      * @var array An array of files to upload.
      */
-    protected $attachedFiles;
+    protected string $attachedFiles;
 
     /**
      * Creates a new Request entity.
@@ -55,7 +55,7 @@ class FacebookBatchRequest extends FacebookRequest implements IteratorAggregate,
      * @param AccessToken|string|null $accessToken
      * @param string|null             $graphVersion
      */
-    public function __construct(FacebookApp $app = null, array $requests = [], $accessToken = null, $graphVersion = null)
+    public function __construct(FacebookApp $app = null, array $requests = [], $accessToken = null, ?string $graphVersion = null)
     {
         parent::__construct($app, $accessToken, 'POST', '', [], null, $graphVersion);
 
@@ -73,7 +73,7 @@ class FacebookBatchRequest extends FacebookRequest implements IteratorAggregate,
      *
      * @throws \InvalidArgumentException
      */
-    public function add($request, $options = null)
+    public function add($request, $options = null) : FacebookBatchRequest
     {
         if (is_array($request)) {
             foreach ($request as $key => $req) {
@@ -121,7 +121,7 @@ class FacebookBatchRequest extends FacebookRequest implements IteratorAggregate,
      *
      * @throws FacebookSDKException
      */
-    public function addFallbackDefaults(FacebookRequest $request)
+    public function addFallbackDefaults(FacebookRequest $request) : void
     {
         if (!$request->getApp()) {
             $app = $this->getApp();
@@ -149,7 +149,7 @@ class FacebookBatchRequest extends FacebookRequest implements IteratorAggregate,
      *
      * @throws FacebookSDKException
      */
-    public function extractFileAttachments(FacebookRequest $request)
+    public function extractFileAttachments(FacebookRequest $request) : ?string
     {
         if (!$request->containsFileUploads()) {
             return null;
@@ -174,7 +174,7 @@ class FacebookBatchRequest extends FacebookRequest implements IteratorAggregate,
      *
      * @return array
      */
-    public function getRequests()
+    public function getRequests() : array
     {
         return $this->requests;
     }
@@ -182,7 +182,7 @@ class FacebookBatchRequest extends FacebookRequest implements IteratorAggregate,
     /**
      * Prepares the requests to be sent as a batch request.
      */
-    public function prepareRequestsForBatch()
+    public function prepareRequestsForBatch() : void
     {
         $this->validateBatchRequestCount();
 
@@ -198,7 +198,7 @@ class FacebookBatchRequest extends FacebookRequest implements IteratorAggregate,
      *
      * @return string
      */
-    public function convertRequestsToJson()
+    public function convertRequestsToJson() : string
     {
         $requests = [];
         foreach ($this->requests as $request) {
@@ -221,7 +221,7 @@ class FacebookBatchRequest extends FacebookRequest implements IteratorAggregate,
      *
      * @throws FacebookSDKException
      */
-    public function validateBatchRequestCount()
+    public function validateBatchRequestCount() : void
     {
         $batchCount = count($this->requests);
         if ($batchCount === 0) {
@@ -242,7 +242,7 @@ class FacebookBatchRequest extends FacebookRequest implements IteratorAggregate,
      *
      * @return array
      */
-    public function requestEntityToBatchArray(FacebookRequest $request, $options = null, $attachedFiles = null)
+    public function requestEntityToBatchArray(FacebookRequest $request, $options = null, ?string $attachedFiles = null) : array
     {
 
         if (null === $options) {
@@ -284,7 +284,7 @@ class FacebookBatchRequest extends FacebookRequest implements IteratorAggregate,
      *
      * @return ArrayIterator
      */
-    public function getIterator()
+    public function getIterator() : ArrayIterator
     {
         return new ArrayIterator($this->requests);
     }
