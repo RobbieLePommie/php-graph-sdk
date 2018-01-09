@@ -213,7 +213,7 @@ class FacebookRedirectLoginHelper
      *
      * @throws FacebookSDKException
      */
-    public function getAccessToken($redirectUrl = null)
+    public function getAccessToken($redirectUrl = null) : AccessToken
     {
         if (!$code = $this->getCode()) {
             return null;
