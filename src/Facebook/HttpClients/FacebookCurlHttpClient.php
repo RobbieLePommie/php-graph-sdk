@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2017 Facebook, Inc.
  *
@@ -64,7 +65,7 @@ class FacebookCurlHttpClient implements FacebookHttpClientInterface
     /**
      * @inheritdoc
      */
-    public function send($url, $method, $body, array $headers, $timeOut)
+    public function send(string $url, string $method, string $body, array $headers, int $timeOut) : GraphRawResponse
     {
         $this->openConnection($url, $method, $body, $headers, $timeOut);
         $this->sendRequest();
@@ -116,7 +117,7 @@ class FacebookCurlHttpClient implements FacebookHttpClientInterface
     /**
      * Closes an existing curl connection
      */
-    public function closeConnection()
+    public function closeConnection() : void
     {
         $this->facebookCurl->close();
     }
@@ -124,7 +125,7 @@ class FacebookCurlHttpClient implements FacebookHttpClientInterface
     /**
      * Send the request and get the raw response from curl
      */
-    public function sendRequest()
+    public function sendRequest() : void
     {
         $this->rawResponse = $this->facebookCurl->exec();
     }
@@ -136,7 +137,7 @@ class FacebookCurlHttpClient implements FacebookHttpClientInterface
      *
      * @return array
      */
-    public function compileRequestHeaders(array $headers)
+    public function compileRequestHeaders(array $headers) : array
     {
         $return = [];
 

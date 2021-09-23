@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2017 Facebook, Inc.
  *
@@ -101,7 +102,7 @@ class FacebookBatchResponse extends FacebookResponse implements IteratorAggregat
         $originalRequest = isset($this->batchRequest[$key]['request']) ? $this->batchRequest[$key]['request'] : null;
 
         $httpResponseBody = isset($response['body']) ? $response['body'] : null;
-        $httpResponseCode = isset($response['code']) ? $response['code'] : null;
+        $httpResponseCode = isset($response['code']) ? (int)$response['code'] : null;
         // @TODO With PHP 5.5 support, this becomes array_column($response['headers'], 'value', 'name')
         $httpResponseHeaders = isset($response['headers']) ? $this->normalizeBatchHeaders($response['headers']) : [];
 

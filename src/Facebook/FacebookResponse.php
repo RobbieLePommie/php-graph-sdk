@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2017 Facebook, Inc.
  *
@@ -37,32 +38,32 @@ class FacebookResponse
     /**
      * @var int The HTTP status code response from Graph.
      */
-    protected $httpStatusCode;
+    protected ?int $httpStatusCode;
 
     /**
      * @var array The headers returned from Graph.
      */
-    protected $headers;
+    protected array $headers;
 
     /**
      * @var string The raw body of the response from Graph.
      */
-    protected $body;
+    protected ?string $body;
 
     /**
      * @var array The decoded body of the Graph response.
      */
-    protected $decodedBody = [];
+    protected array $decodedBody = [];
 
     /**
      * @var FacebookRequest The original request that returned this response.
      */
-    protected $request;
+    protected ?FacebookRequest $request;
 
     /**
      * @var FacebookSDKException The exception thrown by this request.
      */
-    protected $thrownException;
+    protected ?FacebookResponseException $thrownException = null;
 
     /**
      * Creates a new Response entity.
@@ -72,7 +73,7 @@ class FacebookResponse
      * @param int|null        $httpStatusCode
      * @param array|null      $headers
      */
-    public function __construct(FacebookRequest $request, $body = null, $httpStatusCode = null, array $headers = [])
+    public function __construct(?FacebookRequest $request, ?string $body = null, ?int $httpStatusCode = null, array $headers = [])
     {
         $this->request = $request;
         $this->body = $body;
@@ -87,7 +88,7 @@ class FacebookResponse
      *
      * @return FacebookRequest
      */
-    public function getRequest()
+    public function getRequest() : ?FacebookRequest
     {
         return $this->request;
     }
@@ -97,7 +98,7 @@ class FacebookResponse
      *
      * @return FacebookApp
      */
-    public function getApp()
+    public function getApp() : ?FacebookApp
     {
         return $this->request->getApp();
     }
@@ -117,7 +118,7 @@ class FacebookResponse
      *
      * @return int
      */
-    public function getHttpStatusCode()
+    public function getHttpStatusCode() : ?int
     {
         return $this->httpStatusCode;
     }
@@ -127,7 +128,7 @@ class FacebookResponse
      *
      * @return array
      */
-    public function getHeaders()
+    public function getHeaders() : array
     {
         return $this->headers;
     }
@@ -137,7 +138,7 @@ class FacebookResponse
      *
      * @return string
      */
-    public function getBody()
+    public function getBody() : ?string
     {
         return $this->body;
     }
@@ -147,7 +148,7 @@ class FacebookResponse
      *
      * @return array
      */
-    public function getDecodedBody()
+    public function getDecodedBody() : array
     {
         return $this->decodedBody;
     }
@@ -157,7 +158,7 @@ class FacebookResponse
      *
      * @return string|null
      */
-    public function getAppSecretProof()
+    public function getAppSecretProof() : string
     {
         return $this->request->getAppSecretProof();
     }
@@ -167,7 +168,7 @@ class FacebookResponse
      *
      * @return string|null
      */
-    public function getETag()
+    public function getETag() : ?string
     {
         return isset($this->headers['ETag']) ? $this->headers['ETag'] : null;
     }
@@ -177,7 +178,7 @@ class FacebookResponse
      *
      * @return string|null
      */
-    public function getGraphVersion()
+    public function getGraphVersion() : ?string
     {
         return isset($this->headers['Facebook-API-Version']) ? $this->headers['Facebook-API-Version'] : null;
     }
@@ -187,7 +188,7 @@ class FacebookResponse
      *
      * @return boolean
      */
-    public function isError()
+    public function isError() : bool
     {
         return isset($this->decodedBody['error']);
     }
@@ -195,9 +196,9 @@ class FacebookResponse
     /**
      * Throws the exception.
      *
-     * @throws FacebookSDKException
+     * @throws FacebookResponseException
      */
-    public function throwException()
+    public function throwException() : ?FacebookResponseException
     {
         throw $this->thrownException;
     }
@@ -205,7 +206,7 @@ class FacebookResponse
     /**
      * Instantiates an exception to be thrown later.
      */
-    public function makeException()
+    public function makeException() : void
     {
         $this->thrownException = FacebookResponseException::create($this);
     }
@@ -215,7 +216,7 @@ class FacebookResponse
      *
      * @return FacebookResponseException|null
      */
-    public function getThrownException()
+    public function getThrownException() : ?FacebookResponseException
     {
         return $this->thrownException;
     }
@@ -231,24 +232,30 @@ class FacebookResponse
      *    a short-lived access token for a long-lived access token
      * - And sometimes nothing :/ but that'd be a bug.
      */
-    public function decodeBody()
+    public function decodeBody() : void
     {
-        $this->decodedBody = json_decode($this->body, true);
-
-        if ($this->decodedBody === null) {
+        if (empty($this->body)) {
             $this->decodedBody = [];
-            parse_str($this->body, $this->decodedBody);
-        } elseif (is_bool($this->decodedBody)) {
-            // Backwards compatibility for Graph < 2.1.
-            // Mimics 2.1 responses.
-            // @TODO Remove this after Graph 2.0 is no longer supported
-            $this->decodedBody = ['success' => $this->decodedBody];
-        } elseif (is_numeric($this->decodedBody)) {
-            $this->decodedBody = ['id' => $this->decodedBody];
-        }
+        } else {
+            $decodedBody = json_decode($this->body, true);
 
-        if (!is_array($this->decodedBody)) {
-            $this->decodedBody = [];
+            if ($decodedBody === null) {
+                $this->decodedBody = [];
+                parse_str($this->body, $this->decodedBody);
+            } elseif (is_bool($decodedBody)) {
+                // Backwards compatibility for Graph < 2.1.
+                // Mimics 2.1 responses.
+                // @TODO Remove this after Graph 2.0 is no longer supported
+                $this->decodedBody = [
+                    'success' => $decodedBody
+                ];
+            } elseif (is_numeric($decodedBody)) {
+                $this->decodedBody = [
+                    'id' => $decodedBody
+                ];
+            } else {
+                $this->decodedBody = $decodedBody;
+            }
         }
 
         if ($this->isError()) {

@@ -12,15 +12,14 @@
         }
     ],
     "require": {
-        "php": "^5.4|^7.0"
+        "php": "^7.4|^8.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.0",
-        "mockery/mockery": "~0.8",
-        "guzzlehttp/guzzle": "~5.0"
+        "phpunit/phpunit": "~9.0",
+        "mockery/mockery": "~1.3",
+        "guzzlehttp/guzzle": "~7.0"
     },
     "suggest": {
-        "paragonie/random_compat": "Provides a better CSPRNG option in PHP 5",
         "guzzlehttp/guzzle": "Allows for implementation of the Guzzle HTTP client"
     },
     "autoload": {
@@ -36,7 +35,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "5.x-dev"
+            "dev-master": "6.x-dev"
         }
     }
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2017 Facebook, Inc.
  *
@@ -48,35 +49,35 @@ class OAuth2Client
      *
      * @var FacebookApp
      */
-    protected $app;
+    protected FacebookApp $app;
 
     /**
      * The Facebook client.
      *
      * @var FacebookClient
      */
-    protected $client;
+    protected FacebookClient $client;
 
     /**
      * The version of the Graph API to use.
      *
      * @var string
      */
-    protected $graphVersion;
+    protected ?string $graphVersion;
 
     /**
      * The last request sent to Graph.
      *
      * @var FacebookRequest|null
      */
-    protected $lastRequest;
+    protected ?FacebookRequest $lastRequest = null;
 
     /**
      * @param FacebookApp    $app
      * @param FacebookClient $client
      * @param string|null    $graphVersion The version of the Graph API to use.
      */
-    public function __construct(FacebookApp $app, FacebookClient $client, $graphVersion = null)
+    public function __construct(FacebookApp $app, FacebookClient $client, ?string $graphVersion = null)
     {
         $this->app = $app;
         $this->client = $client;
@@ -89,7 +90,7 @@ class OAuth2Client
      *
      * @return FacebookRequest|null
      */
-    public function getLastRequest()
+    public function getLastRequest() : ?FacebookRequest
     {
         return $this->lastRequest;
     }
@@ -101,7 +102,7 @@ class OAuth2Client
      *
      * @return AccessTokenMetadata
      */
-    public function debugToken($accessToken)
+    public function debugToken($accessToken) : AccessTokenMetadata
     {
         $accessToken = $accessToken instanceof AccessToken ? $accessToken->getValue() : $accessToken;
         $params = ['input_token' => $accessToken];
@@ -132,7 +133,7 @@ class OAuth2Client
      *
      * @return string
      */
-    public function getAuthorizationUrl($redirectUrl, $state, array $scope = [], array $params = [], $separator = '&')
+    public function getAuthorizationUrl(string $redirectUrl, $state, array $scope = [], array $params = [], string $separator = '&') : string
     {
         $params += [
             'client_id' => $this->app->getId(),
@@ -143,7 +144,7 @@ class OAuth2Client
             'scope' => implode(',', $scope)
         ];
 
-        return static::BASE_AUTHORIZATION_URL . '/' . $this->graphVersion . '/dialog/oauth?' . http_build_query($params, null, $separator);
+        return static::BASE_AUTHORIZATION_URL . '/' . $this->graphVersion . '/dialog/oauth?' . http_build_query($params, '', $separator);
     }
 
     /**
@@ -156,7 +157,7 @@ class OAuth2Client
      *
      * @throws FacebookSDKException
      */
-    public function getAccessTokenFromCode($code, $redirectUri = '')
+    public function getAccessTokenFromCode(string $code, string $redirectUri = '') : AccessToken
     {
         $params = [
             'code' => $code,
@@ -175,7 +176,7 @@ class OAuth2Client
      *
      * @throws FacebookSDKException
      */
-    public function getLongLivedAccessToken($accessToken)
+    public function getLongLivedAccessToken($accessToken) : AccessToken
     {
         $accessToken = $accessToken instanceof AccessToken ? $accessToken->getValue() : $accessToken;
         $params = [
@@ -192,11 +193,11 @@ class OAuth2Client
      * @param AccessToken|string $accessToken
      * @param string             $redirectUri
      *
-     * @return AccessToken
+     * @return AccessToken << Are you sure?
      *
      * @throws FacebookSDKException
      */
-    public function getCodeFromLongLivedAccessToken($accessToken, $redirectUri = '')
+    public function getCodeFromLongLivedAccessToken($accessToken, string $redirectUri = '')
     {
         $params = [
             'redirect_uri' => $redirectUri,
@@ -221,7 +222,7 @@ class OAuth2Client
      *
      * @throws FacebookSDKException
      */
-    protected function requestAnAccessToken(array $params)
+    protected function requestAnAccessToken(array $params) : AccessToken
     {
         $response = $this->sendRequestWithClientParams('/oauth/access_token', $params);
         $data = $response->getDecodedBody();
@@ -258,7 +259,7 @@ class OAuth2Client
      *
      * @throws FacebookResponseException
      */
-    protected function sendRequestWithClientParams($endpoint, array $params, $accessToken = null)
+    protected function sendRequestWithClientParams($endpoint, array $params, $accessToken = null) : FacebookResponse
     {
         $params += $this->getClientParams();
 
@@ -282,7 +283,7 @@ class OAuth2Client
      *
      * @return array
      */
-    protected function getClientParams()
+    protected function getClientParams() : array
     {
         return [
             'client_id' => $this->app->getId(),

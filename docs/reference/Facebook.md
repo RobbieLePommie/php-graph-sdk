@@ -53,6 +53,7 @@ $fb = new Facebook\Facebook([
   'persistent_data_handler' => 'memory',
   'url_detection_handler' => new MyUrlDetectionHandler(),
   'pseudo_random_string_generator' => new MyPseudoRandomStringGenerator(),
+  'use_gaming_graph' => false
 ]);
 ```
 
@@ -138,6 +139,9 @@ $fb = new Facebook([
 ```
 
 If any other value is provided an `InvalidArgumentException` will be thrown.
+
+### `use_gaming_graph`
+Allows you to target the new gaming graph endpoints. Gaming graph will be selected if a Gaming Graph token is used.
 
 ## Environment variables fallback
 

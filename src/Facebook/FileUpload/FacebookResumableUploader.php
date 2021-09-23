@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2017 Facebook, Inc.
  *
@@ -41,7 +42,7 @@ class FacebookResumableUploader
     /**
      * @var FacebookApp
      */
-    protected $app;
+    protected FacebookApp $app;
 
     /**
      * @var string
@@ -51,12 +52,12 @@ class FacebookResumableUploader
     /**
      * @var FacebookClient The Facebook client service.
      */
-    protected $client;
+    protected FacebookClient $client;
 
     /**
      * @var string Graph version to use for this request.
      */
-    protected $graphVersion;
+    protected ?string $graphVersion;
 
     /**
      * @param FacebookApp             $app
@@ -64,7 +65,7 @@ class FacebookResumableUploader
      * @param AccessToken|string|null $accessToken
      * @param string                  $graphVersion
      */
-    public function __construct(FacebookApp $app, FacebookClient $client, $accessToken, $graphVersion)
+    public function __construct(FacebookApp $app, FacebookClient $client, $accessToken, ?string $graphVersion)
     {
         $this->app = $app;
         $this->client = $client;
@@ -82,7 +83,7 @@ class FacebookResumableUploader
      *
      * @throws FacebookSDKException
      */
-    public function start($endpoint, FacebookFile $file)
+    public function start(string $endpoint, FacebookFile $file) : FacebookTransferChunk
     {
         $params = [
             'upload_phase' => 'start',
@@ -90,7 +91,7 @@ class FacebookResumableUploader
         ];
         $response = $this->sendUploadRequest($endpoint, $params);
 
-        return new FacebookTransferChunk($file, $response['upload_session_id'], $response['video_id'], $response['start_offset'], $response['end_offset']);
+        return new FacebookTransferChunk($file, (int)$response['upload_session_id'], (int)$response['video_id'], (int)$response['start_offset'], (int)$response['end_offset']);
     }
 
     /**
@@ -104,7 +105,7 @@ class FacebookResumableUploader
      *
      * @throws FacebookResponseException
      */
-    public function transfer($endpoint, FacebookTransferChunk $chunk, $allowToThrow = false)
+    public function transfer(string $endpoint, FacebookTransferChunk $chunk, bool $allowToThrow = false) : FacebookTransferChunk
     {
         $params = [
             'upload_phase' => 'transfer',
@@ -149,7 +150,7 @@ class FacebookResumableUploader
      *
      * @throws FacebookSDKException
      */
-    public function finish($endpoint, $uploadSessionId, $metadata = [])
+    public function finish(string $endpoint, int $uploadSessionId, array $metadata = [])
     {
         $params = array_merge($metadata, [
             'upload_phase' => 'finish',
@@ -168,7 +169,7 @@ class FacebookResumableUploader
      *
      * @return array
      */
-    private function sendUploadRequest($endpoint, $params = [])
+    private function sendUploadRequest(string $endpoint, array $params = [])
     {
         $request = new FacebookRequest($this->app, $this->accessToken, 'POST', $endpoint, $params, null, $this->graphVersion);
 

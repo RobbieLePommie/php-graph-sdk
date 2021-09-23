@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2017 Facebook, Inc.
  *
@@ -30,14 +31,14 @@ namespace Facebook\Exceptions;
  */
 class FacebookResumableUploadException extends FacebookSDKException
 {
-    protected $startOffset;
+    protected ?int $startOffset = null;
 
-    protected $endOffset;
+    protected ?int $endOffset = null;
 
     /**
      * @return int|null
      */
-    public function getStartOffset()
+    public function getStartOffset() : ?int
     {
         return $this->startOffset;
     }
@@ -45,7 +46,7 @@ class FacebookResumableUploadException extends FacebookSDKException
     /**
      * @param int|null $startOffset
      */
-    public function setStartOffset($startOffset)
+    public function setStartOffset(int $startOffset) : void
     {
         $this->startOffset = $startOffset;
     }
@@ -53,7 +54,7 @@ class FacebookResumableUploadException extends FacebookSDKException
     /**
      * @return int|null
      */
-    public function getEndOffset()
+    public function getEndOffset() : ?int
     {
         return $this->endOffset;
     }
@@ -61,7 +62,7 @@ class FacebookResumableUploadException extends FacebookSDKException
     /**
      * @param int|null $endOffset
      */
-    public function setEndOffset($endOffset)
+    public function setEndOffset(int $endOffset) : void
     {
         $this->endOffset = $endOffset;
     }

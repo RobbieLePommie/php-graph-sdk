@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2017 Facebook, Inc.
  *
@@ -133,6 +134,7 @@ class Facebook
             'persistent_data_handler' => null,
             'pseudo_random_string_generator' => null,
             'url_detection_handler' => null,
+            'use_gaming_graph' => false,
         ], $config);
 
         if (!$config['app_id']) {
@@ -145,7 +147,8 @@ class Facebook
         $this->app = new FacebookApp($config['app_id'], $config['app_secret']);
         $this->client = new FacebookClient(
             HttpClientsFactory::createHttpClient($config['http_client_handler']),
-            $config['enable_beta_mode']
+            $config['enable_beta_mode'],
+            $config['use_gaming_graph']
         );
         $this->pseudoRandomStringGenerator = PseudoRandomStringGeneratorFactory::createPseudoRandomStringGenerator(
             $config['pseudo_random_string_generator']
@@ -246,21 +249,23 @@ class Facebook
      *
      * @throws \InvalidArgumentException
      */
-    public function setDefaultAccessToken($accessToken)
+    public function setDefaultAccessToken($accessToken) : void
     {
         if (is_string($accessToken)) {
+            if (substr($accessToken, 0, 2) == 'GG') {
+                // Force to gaming graph
+                $this->client->setUseGamingGraph(true);
+            }
             $this->defaultAccessToken = new AccessToken($accessToken);
-
-            return;
-        }
-
-        if ($accessToken instanceof AccessToken) {
+        } elseif ($accessToken instanceof AccessToken) {
+            if (substr($accessToken->getValue(), 0, 2) == 'GG') {
+                // Force to gaming graph
+                $this->client->setUseGamingGraph(true);
+            }
             $this->defaultAccessToken = $accessToken;
-
-            return;
+        } else {
+            throw new \InvalidArgumentException('The default access token must be of type "string" or Facebook\AccessToken');
         }
-
-        throw new \InvalidArgumentException('The default access token must be of type "string" or Facebook\AccessToken');
     }
 
     /**
@@ -460,7 +465,7 @@ class Facebook
      *
      * @throws FacebookSDKException
      */
-    public function sendRequest($method, $endpoint, array $params = [], $accessToken = null, $eTag = null, $graphVersion = null)
+    public function sendRequest($method, $endpoint, array $params = [], $accessToken = null, $eTag = null, $graphVersion = null)  : FacebookResponse
     {
         $accessToken = $accessToken ?: $this->defaultAccessToken;
         $graphVersion = $graphVersion ?: $this->defaultGraphVersion;
@@ -529,7 +534,7 @@ class Facebook
      *
      * @throws FacebookSDKException
      */
-    public function request($method, $endpoint, array $params = [], $accessToken = null, $eTag = null, $graphVersion = null)
+    public function request(string $method, string $endpoint, array $params = [], $accessToken = null, ?string $eTag = null, ?string $graphVersion = null)
     {
         $accessToken = $accessToken ?: $this->defaultAccessToken;
         $graphVersion = $graphVersion ?: $this->defaultGraphVersion;

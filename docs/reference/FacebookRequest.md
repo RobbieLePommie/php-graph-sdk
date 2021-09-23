@@ -15,8 +15,8 @@ $request = new FacebookRequest(
   string $method,
   string $endpoint,
   array $params,
-  string $eTag,
-  string $graphVersion
+  ?string $eTag,
+  ?string $graphVersion
 );
 ```
 

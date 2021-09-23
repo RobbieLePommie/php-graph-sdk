@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2017 Facebook, Inc.
  *
@@ -39,7 +40,7 @@ class GraphCoverPhoto extends GraphNode
     {
         return $this->getField('id');
     }
-    
+
     /**
      * Returns the source of cover if it exists
      *

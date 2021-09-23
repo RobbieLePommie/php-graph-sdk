@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2017 Facebook, Inc.
  *
@@ -41,6 +42,12 @@ class FacebookClient
     const BASE_GRAPH_URL = 'https://graph.facebook.com';
 
     /**
+     * @const string Production Gaming Graph API URL.
+     */
+
+    const BASE_GRAPH_GAMING_URL = 'https://graph.fb.gg';
+
+    /**
      * @const string Graph API URL for video uploads.
      */
     const BASE_GRAPH_VIDEO_URL = 'https://graph-video.facebook.com';
@@ -49,6 +56,11 @@ class FacebookClient
      * @const string Beta Graph API URL.
      */
     const BASE_GRAPH_URL_BETA = 'https://graph.beta.facebook.com';
+
+    /**
+     * @const string Beta Graph API URL.
+     */
+    const BASE_GRAPH_GAMING_URL_BETA = 'https://graph.beta.fb.gg';
 
     /**
      * @const string Beta Graph API URL for video uploads.
@@ -71,14 +83,19 @@ class FacebookClient
     const DEFAULT_VIDEO_UPLOAD_REQUEST_TIMEOUT = 7200;
 
     /**
+     * @var bool Toggle to use Gaming Graph endpoints.
+     */
+    protected bool $useGamingGraph = false;
+
+    /**
      * @var bool Toggle to use Graph beta url.
      */
-    protected $enableBetaMode = false;
+    protected bool $enableBetaMode = false;
 
     /**
      * @var FacebookHttpClientInterface HTTP client handler.
      */
-    protected $httpClientHandler;
+    protected FacebookHttpClientInterface $httpClientHandler;
 
     /**
      * @var int The number of calls that have been made to Graph.
@@ -91,10 +108,11 @@ class FacebookClient
      * @param FacebookHttpClientInterface|null $httpClientHandler
      * @param boolean                          $enableBeta
      */
-    public function __construct(FacebookHttpClientInterface $httpClientHandler = null, $enableBeta = false)
+    public function __construct(FacebookHttpClientInterface $httpClientHandler = null, $enableBeta = false, $useGamingGraph = false)
     {
         $this->httpClientHandler = $httpClientHandler ?: $this->detectHttpClientHandler();
         $this->enableBetaMode = $enableBeta;
+        $this->useGamingGraph = $useGamingGraph;
     }
 
     /**
@@ -102,7 +120,7 @@ class FacebookClient
      *
      * @param FacebookHttpClientInterface $httpClientHandler
      */
-    public function setHttpClientHandler(FacebookHttpClientInterface $httpClientHandler)
+    public function setHttpClientHandler(FacebookHttpClientInterface $httpClientHandler) : void
     {
         $this->httpClientHandler = $httpClientHandler;
     }
@@ -112,7 +130,7 @@ class FacebookClient
      *
      * @return FacebookHttpClientInterface
      */
-    public function getHttpClientHandler()
+    public function getHttpClientHandler() : FacebookHttpClientInterface
     {
         return $this->httpClientHandler;
     }
@@ -122,7 +140,7 @@ class FacebookClient
      *
      * @return FacebookHttpClientInterface
      */
-    public function detectHttpClientHandler()
+    public function detectHttpClientHandler() : FacebookHttpClientInterface
     {
         return extension_loaded('curl') ? new FacebookCurlHttpClient() : new FacebookStreamHttpClient();
     }
@@ -132,9 +150,19 @@ class FacebookClient
      *
      * @param boolean $betaMode
      */
-    public function enableBetaMode($betaMode = true)
+    public function enableBetaMode($betaMode = true) : void
     {
         $this->enableBetaMode = $betaMode;
+    }
+
+    /**
+     * Toggle Gaming Graph endpoint.
+     *
+     * @param boolean $betaMode
+     */
+    public function setUseGamingGraph($useGamingGraph = false) : void
+    {
+        $this->useGamingGraph = $useGamingGraph;
     }
 
     /**
@@ -144,13 +172,29 @@ class FacebookClient
      *
      * @return string
      */
-    public function getBaseGraphUrl($postToVideoUrl = false)
+    public function getBaseGraphUrl($postToVideoUrl = false) : string
     {
+        $retval = '';
         if ($postToVideoUrl) {
-            return $this->enableBetaMode ? static::BASE_GRAPH_VIDEO_URL_BETA : static::BASE_GRAPH_VIDEO_URL;
+            if ($this->enableBetaMode) {
+                $retval = static::BASE_GRAPH_VIDEO_URL_BETA;
+            } else {
+                $retval = static::BASE_GRAPH_VIDEO_URL;
+            }
+        } elseif ($this->useGamingGraph) {
+            if ($this->enableBetaMode) {
+                $retval = static::BASE_GRAPH_GAMING_URL_BETA;
+            } else {
+                $retval = static::BASE_GRAPH_GAMING_URL;
+            }
+        } else {
+            if ($this->enableBetaMode) {
+                $retval = static::BASE_GRAPH_URL_BETA;
+            } else {
+                $retval = static::BASE_GRAPH_URL;
+            }
         }
-
-        return $this->enableBetaMode ? static::BASE_GRAPH_URL_BETA : static::BASE_GRAPH_URL;
+        return $retval;
     }
 
     /**
@@ -160,7 +204,7 @@ class FacebookClient
      *
      * @return array
      */
-    public function prepareRequestMessage(FacebookRequest $request)
+    public function prepareRequestMessage(FacebookRequest $request) : array
     {
         $postToVideoUrl = $request->containsVideoUploads();
         $url = $this->getBaseGraphUrl($postToVideoUrl) . $request->getUrl();
@@ -195,7 +239,7 @@ class FacebookClient
      *
      * @throws FacebookSDKException
      */
-    public function sendRequest(FacebookRequest $request)
+    public function sendRequest(FacebookRequest $request) : FacebookResponse
     {
         if (get_class($request) === 'Facebook\FacebookRequest') {
             $request->validateAccessToken();
@@ -240,7 +284,7 @@ class FacebookClient
      *
      * @throws FacebookSDKException
      */
-    public function sendBatchRequest(FacebookBatchRequest $request)
+    public function sendBatchRequest(FacebookBatchRequest $request) : FacebookResponse
     {
         $request->prepareRequestsForBatch();
         $facebookResponse = $this->sendRequest($request);

@@ -29,7 +29,7 @@ use Facebook\FacebookRequest;
 use Facebook\FileUpload\FacebookFile;
 use Facebook\FileUpload\FacebookVideo;
 
-class FacebookRequestTest extends \PHPUnit_Framework_TestCase
+class FacebookRequestTest extends \PHPUnit\Framework\TestCase
 {
     public function testAnEmptyRequestEntityCanInstantiate()
     {
@@ -44,6 +44,8 @@ class FacebookRequestTest extends \PHPUnit_Framework_TestCase
      */
     public function testAMissingAccessTokenWillThrow()
     {
+        $this->expectException('\Facebook\Exceptions\FacebookSDKException');
+
         $app = new FacebookApp('123', 'foo_secret');
         $request = new FacebookRequest($app);
 
@@ -55,6 +57,8 @@ class FacebookRequestTest extends \PHPUnit_Framework_TestCase
      */
     public function testAMissingMethodWillThrow()
     {
+        $this->expectException('\Facebook\Exceptions\FacebookSDKException');
+
         $app = new FacebookApp('123', 'foo_secret');
         $request = new FacebookRequest($app);
 
@@ -66,6 +70,8 @@ class FacebookRequestTest extends \PHPUnit_Framework_TestCase
      */
     public function testAnInvalidMethodWillThrow()
     {
+        $this->expectException('\Facebook\Exceptions\FacebookSDKException');
+
         $app = new FacebookApp('123', 'foo_secret');
         $request = new FacebookRequest($app, 'foo_token', 'FOO');
 
@@ -114,6 +120,8 @@ class FacebookRequestTest extends \PHPUnit_Framework_TestCase
      */
     public function testAccessTokenConflictsWillThrow()
     {
+        $this->expectException('\Facebook\Exceptions\FacebookSDKException');
+
         $app = new FacebookApp('123', 'foo_secret');
         new FacebookRequest($app, 'foo_token', 'POST', '/me', ['access_token' => 'bar_token']);
     }

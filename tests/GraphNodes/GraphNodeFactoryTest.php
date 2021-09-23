@@ -28,14 +28,14 @@ use Facebook\FacebookRequest;
 use Facebook\FacebookResponse;
 use Facebook\GraphNodes\GraphNodeFactory;
 
-class GraphNodeFactoryTest extends \PHPUnit_Framework_TestCase
+class GraphNodeFactoryTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Facebook\FacebookRequest
      */
     protected $request;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $app = new FacebookApp('123', 'foo_app_secret');
         $this->request = new FacebookRequest(
@@ -51,6 +51,8 @@ class GraphNodeFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testAValidGraphNodeResponseWillNotThrow()
     {
+        $this->expectNotToPerformAssertions();
+
         $data = '{"id":"123","name":"foo"}';
         $res = new FacebookResponse($this->request, $data);
 
@@ -63,6 +65,8 @@ class GraphNodeFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testANonGraphNodeResponseWillThrow()
     {
+        $this->expectException('\Facebook\Exceptions\FacebookSDKException');
+
         $data = '{"data":[{"id":"123","name":"foo"},{"id":"1337","name":"bar"}]}';
         $res = new FacebookResponse($this->request, $data);
 
@@ -72,6 +76,8 @@ class GraphNodeFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testAValidGraphEdgeResponseWillNotThrow()
     {
+        $this->expectNotToPerformAssertions();
+
         $data = '{"data":[{"id":"123","name":"foo"},{"id":"1337","name":"bar"}]}';
         $res = new FacebookResponse($this->request, $data);
 
@@ -84,6 +90,8 @@ class GraphNodeFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testANonGraphEdgeResponseWillThrow()
     {
+        $this->expectException('\Facebook\Exceptions\FacebookSDKException');
+
         $data = '{"id":"123","name":"foo"}';
         $res = new FacebookResponse($this->request, $data);
 
@@ -107,11 +115,15 @@ class GraphNodeFactoryTest extends \PHPUnit_Framework_TestCase
      */
     public function testInvalidSubClassesWillThrow()
     {
+        $this->expectException('\Facebook\Exceptions\FacebookSDKException');
+
         GraphNodeFactory::validateSubclass('FooSubClass');
     }
 
     public function testValidSubClassesWillNotThrow()
     {
+        $this->expectNotToPerformAssertions();
+
         GraphNodeFactory::validateSubclass('\Facebook\GraphNodes\GraphNode');
         GraphNodeFactory::validateSubclass('\Facebook\GraphNodes\GraphAlbum');
         GraphNodeFactory::validateSubclass('\Facebook\Tests\Fixtures\MyFooGraphNode');

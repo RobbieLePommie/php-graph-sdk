@@ -25,13 +25,15 @@ namespace Facebook\Tests\PseudoRandomString;
 
 use Facebook\Tests\Fixtures\MyFooBarPseudoRandomStringGenerator;
 
-class PseudoRandomStringGeneratorTraitTest extends \PHPUnit_Framework_TestCase
+class PseudoRandomStringGeneratorTraitTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @expectedException \InvalidArgumentException
      */
     public function testAnInvalidLengthWillThrow()
     {
+        $this->expectException('\InvalidArgumentException');
+
         $prsg = new MyFooBarPseudoRandomStringGenerator();
         $prsg->validateLength('foo_len');
     }
@@ -41,6 +43,8 @@ class PseudoRandomStringGeneratorTraitTest extends \PHPUnit_Framework_TestCase
      */
     public function testALengthThatIsNotAtLeastOneCharacterWillThrow()
     {
+        $this->expectException('\InvalidArgumentException');
+
         $prsg = new MyFooBarPseudoRandomStringGenerator();
         $prsg->validateLength(0);
     }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2017 Facebook, Inc.
  *
@@ -95,8 +96,8 @@ class GraphSessionInfo extends GraphNode
      *
      * @return string|null
      */
-    public function getUserId()
+    public function getUserId() : ?string
     {
-        return $this->getField('user_id');
+        return (string)$this->getField('user_id');
     }
 }

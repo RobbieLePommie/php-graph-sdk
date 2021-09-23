@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2017 Facebook, Inc.
  *
@@ -144,7 +145,7 @@ class RequestBodyMultipart implements RequestBodyInterface
      */
     private function getNestedParams(array $params)
     {
-        $query = http_build_query($params, null, '&');
+        $query = http_build_query($params, '', '&');
         $params = explode('&', $query);
         $result = [];
 

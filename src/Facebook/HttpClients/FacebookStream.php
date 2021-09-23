@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /**
  * Copyright 2017 Facebook, Inc.
  *
@@ -41,14 +42,14 @@ class FacebookStream
     /**
      * @var array Response headers from the stream wrapper
      */
-    protected $responseHeaders = [];
+    protected array $responseHeaders = [];
 
     /**
      * Make a new context stream reference instance
      *
      * @param array $options
      */
-    public function streamContextCreate(array $options)
+    public function streamContextCreate(array $options) : void
     {
         $this->stream = stream_context_create($options);
     }
@@ -58,7 +59,7 @@ class FacebookStream
      *
      * @return array
      */
-    public function getResponseHeaders()
+    public function getResponseHeaders() : array
     {
         return $this->responseHeaders;
     }
@@ -70,7 +71,7 @@ class FacebookStream
      *
      * @return mixed
      */
-    public function fileGetContents($url)
+    public function fileGetContents($url) : string
     {
         $rawResponse = file_get_contents($url, false, $this->stream);
         $this->responseHeaders = $http_response_header ?: [];

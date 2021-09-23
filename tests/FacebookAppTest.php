@@ -25,14 +25,14 @@ namespace Facebook\Tests;
 
 use Facebook\FacebookApp;
 
-class FacebookAppTest extends \PHPUnit_Framework_TestCase
+class FacebookAppTest extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var FacebookApp
      */
     private $app;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->app = new FacebookApp('id', 'secret');
     }
@@ -69,6 +69,8 @@ class FacebookAppTest extends \PHPUnit_Framework_TestCase
      */
     public function testOverflowIntegersWillThrow()
     {
+        $this->expectException('\Facebook\Exceptions\FacebookSDKException');
+
         new FacebookApp(PHP_INT_MAX + 1, "foo");
     }
 

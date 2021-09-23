@@ -25,11 +25,11 @@ namespace Facebook\Tests\FileUpload;
 
 use Facebook\FileUpload\FacebookFile;
 
-class FacebookFileTest extends \PHPUnit_Framework_TestCase
+class FacebookFileTest extends \PHPUnit\Framework\TestCase
 {
     protected $testFile = '';
 
-    protected function setUp()
+    protected function setUp() : void
     {
         $this->testFile = __DIR__ . '/../foo.txt';
     }
@@ -55,6 +55,8 @@ class FacebookFileTest extends \PHPUnit_Framework_TestCase
      */
     public function testTryingToOpenAFileThatDoesntExistsThrows()
     {
+        $this->expectException('\Facebook\Exceptions\FacebookSDKException');
+
         new FacebookFile('does_not_exist.file');
     }
 }

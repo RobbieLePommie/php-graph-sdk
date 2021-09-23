@@ -26,17 +26,22 @@ namespace Facebook\Tests\GraphNodes;
 use Mockery as m;
 use Facebook\GraphNodes\GraphNodeFactory;
 
-abstract class AbstractGraphNode extends \PHPUnit_Framework_TestCase
+abstract class AbstractGraphNode extends \PHPUnit\Framework\TestCase
 {
     /**
      * @var \Facebook\FacebookResponse|\Mockery\MockInterface
      */
     protected $responseMock;
 
-    protected function setUp()
+    protected function setUp() : void
     {
         parent::setUp();
         $this->responseMock = m::mock('\Facebook\FacebookResponse');
+    }
+
+    protected function tearDown(): void
+    {
+        m::close();
     }
 
     protected function makeFactoryWithData($data)
