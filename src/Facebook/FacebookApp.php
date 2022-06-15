@@ -51,6 +51,14 @@ class FacebookApp implements \Serializable
         $this->secret = $secret;
     }
 
+    public function __serialize() : array
+    {
+    }
+
+    public function __unserialize(array $serialized): void
+    {
+    }
+
     /**
      * Returns the app ID.
      *
