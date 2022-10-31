@@ -53,6 +53,7 @@ class FacebookApp implements \Serializable
 
     public function __serialize() : array
     {
+        return [];
     }
 
     public function __unserialize(array $serialized): void
